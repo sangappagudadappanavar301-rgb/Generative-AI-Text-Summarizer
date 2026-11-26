@@ -1,9 +1,23 @@
 import streamlit as st
+from google import genai
 
-st.title("Gen AI Text Summarizer")
+st.title("Generative AI Text Summarizer")
 
-text = st.text_area("Enter your text")
+api_key = st.text_input("Enter your Gemini API Key", type="password")
+
+text = st.text_area("Enter your text here")
 
 if st.button("Summarize"):
-    st.write("Your text:")
-    st.write(text)
+    if api_key and text:
+        client = genai.Client(api_key=api_key)
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents="Summarize this text in simple English:\n" + text
+        )
+
+        st.subheader("Summary")
+        st.write(response.text)
+
+    else:
+        st.warning("Please enter API key and text.")
